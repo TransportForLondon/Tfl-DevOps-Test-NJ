@@ -9,8 +9,8 @@ on:
   workflow_dispatch:
 
 env:
-  RESOURCE_GROUP_NAME: DevOps-Demo-Test
-  SUBSCRIPTION_ID: 3065ef51-6e69-4ee9-a407-b2cc275f91d6
+  RESOURCE_GROUP_NAME: recruitment-devopsdev-nj-rg
+  SUBSCRIPTION_ID: 17881e37-84a0-46cf-b812-1e928dacab11
   GITHUB_TOKEN: ${{ secrets.GHPAT_TOKEN || github.token }}
 
 jobs:

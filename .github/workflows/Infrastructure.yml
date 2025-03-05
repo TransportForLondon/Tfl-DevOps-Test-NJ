@@ -14,7 +14,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.GHPAT_TOKEN || github.token }}
 
 jobs:
-  prod:
+  DevNJ:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4

@@ -37,7 +37,7 @@ jobs:
         run: dotnet publish --configuration ${{ env.CONFIGURATION }} --output PublishApi Api/Api.csproj
 
       - name: Upload Api
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: api
           path: PublishApi
@@ -59,7 +59,7 @@ jobs:
         run: dotnet ef migrations script --project Api/Api.csproj --configuration ${{ env.CONFIGURATION }} --output migrationScript/migration.sql --idempotent --verbose
 
       - name: Upload Migration Script
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4.6.2
         with:
           name: script
           path: migrationScript
@@ -68,17 +68,19 @@ jobs:
     needs: [build-api, build-migration-script]
     runs-on: ubuntu-latest
     environment: 
-      name: prod
+      name: NJDev
       url: ${{ steps.deploy-api.outputs.webapp-url }}
+    permissions:
+      id-token: write
     steps:
       - name: Download Api Artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.3.0
         with:
           name: api
           path: api-artifact
 
       - name: Download DB artifact
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4.3.0
         with:
           name: script
           path: db-artifact
@@ -91,15 +93,17 @@ jobs:
           DatabaseConnection.Password: ${{ secrets.APP_USER_PASSWORD }}
           ApplicationInsights.ConnectionString: ${{ vars.APP_INSIGHTS_CONN_STRING }}
 
-      - name: Azure Login
-        uses: azure/login@v1
+      - name: Azure CLI Login
+        uses: azure/login@v2
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Database
-        uses: azure/sql-action@v2
+        uses: azure/sql-action@v2.2.1
         with:
-          connection-string: '${{ vars.DATABASE_CONN_STRING }}password=${{ secrets.APP_USER_PASSWORD }}'
+          connection-string: ${{ format('{0}User ID=appUser;Password={1};', vars.DATABASE_CONN_STRING, secrets.APP_USER_PASSWORD) }}
           path: db-artifact/migration.sql
 
       - name: Deploy API

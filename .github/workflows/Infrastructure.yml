@@ -9,28 +9,32 @@ on:
   workflow_dispatch:
 
 env:
-  RESOURCE_GROUP_NAME: DevOps-Demo-Test
-  SUBSCRIPTION_ID: 3065ef51-6e69-4ee9-a407-b2cc275f91d6
   GITHUB_TOKEN: ${{ secrets.GHPAT_TOKEN || github.token }}
 
 jobs:
-  prod:
+  NJDev:
+    permissions:
+      id-token: write
+
     runs-on: ubuntu-latest
+    environment: NJDev
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Azure CLI
-      uses: azure/login@v1
+    - name: Azure CLI Login
+      uses: azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     - name: Deploy Template
       id: deploy-template
       uses: azure/arm-deploy@v1
       with:
         scope: resourcegroup
-        subscriptionId: ${{ env.SUBSCRIPTION_ID }}
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ vars.AZURE_RG_NAME }}
         template: ./Infrastructure/main.bicep
         deploymentMode: Incremental
         deploymentName: 'school-infra-deployment'

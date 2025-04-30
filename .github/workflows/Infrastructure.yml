@@ -9,28 +9,32 @@ on:
   workflow_dispatch:
 
 env:
-  RESOURCE_GROUP_NAME: recruitment-devopsdev-nj-rg
-  SUBSCRIPTION_ID: 17881e37-84a0-46cf-b812-1e928dacab11
   GITHUB_TOKEN: ${{ secrets.GHPAT_TOKEN || github.token }}
 
 jobs:
-  DevNJ:
+  NJDev:
+    permissions:
+      id-token: write
+
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     
-    - name: Setup Azure CLI
-      uses: azure/login@v1
+    - name: Azure CLI Login
+      uses: azure/login@v2
       with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true
 
     - name: Deploy Template
       id: deploy-template
       uses: azure/arm-deploy@v1
       with:
         scope: resourcegroup
-        subscriptionId: ${{ env.SUBSCRIPTION_ID }}
-        resourceGroupName: ${{ env.RESOURCE_GROUP_NAME }}
+        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        resourceGroupName: ${{ vars.AZURE_RG_NAME }}
         template: ./Infrastructure/main.bicep
         deploymentMode: Incremental
         deploymentName: 'school-infra-deployment'

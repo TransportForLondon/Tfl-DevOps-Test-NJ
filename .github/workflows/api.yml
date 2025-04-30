@@ -70,6 +70,8 @@ jobs:
     environment: 
       name: NJDev
       url: ${{ steps.deploy-api.outputs.webapp-url }}
+    permissions:
+      id-token: write
     steps:
       - name: Download Api Artifact
         uses: actions/download-artifact@v4.3.0

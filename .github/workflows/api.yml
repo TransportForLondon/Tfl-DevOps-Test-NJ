@@ -101,9 +101,9 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy Database
-        uses: azure/sql-action@v2
+        uses: azure/sql-action@v2.2.1
         with:
-          connection-string: ${{ format('{0}Password={1};', vars.DATABASE_CONN_STRING, secrets.APP_USER_PASSWORD) }}
+          connection-string: ${{ format('{0}User ID=appUser;Password={1};', vars.DATABASE_CONN_STRING, 'TohiT5ec@8ROBR_!_L!w') }}
           path: db-artifact/migration.sql
 
       - name: Deploy API

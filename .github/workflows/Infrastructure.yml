@@ -17,6 +17,7 @@ jobs:
       id-token: write
 
     runs-on: ubuntu-latest
+    environment: NJDev
     steps:
     - uses: actions/checkout@v4
     

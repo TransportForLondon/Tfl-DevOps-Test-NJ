@@ -103,7 +103,7 @@ jobs:
       - name: Deploy Database
         uses: azure/sql-action@v2.2.1
         with:
-          connection-string: ${{ format('{0}User ID=appUser;Password={1};', vars.DATABASE_CONN_STRING, 'TohiT5ec@8ROBR_!_L!w') }}
+          connection-string: ${{ format('{0}User ID=appUser;Password={1};', vars.DATABASE_CONN_STRING, secrets.APP_USER_PASSWORD) }}
           path: db-artifact/migration.sql
 
       - name: Deploy API

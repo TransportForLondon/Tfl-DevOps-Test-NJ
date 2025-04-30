@@ -46,8 +46,10 @@ jobs:
     needs: build-studentPortal
     runs-on: ubuntu-latest
     environment: 
-      name: prod
+      name: NJDev
       url: ${{ steps.deploy-api.outputs.webapp-url }}
+    permissions:
+      id-token: write
     steps:
       - name: Download StudentPortal Artifact
         uses: actions/download-artifact@v4.3.0
